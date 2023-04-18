@@ -10,10 +10,16 @@ CONFIG += c++17
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    piece.cpp \
+    puzzle.cpp \
+    user.cpp
 
 HEADERS += \
-    mainwindow.h
+    mainwindow.h \
+    piece.h \
+    puzzle.h \
+    user.h
 
 FORMS += \
     mainwindow.ui
