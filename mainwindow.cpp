@@ -17,10 +17,20 @@ MainWindow::MainWindow(QWidget *parent)
     frameLayout->addWidget(m_puzzle);
 
     setCentralWidget(frame);
+
+    loadImage();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::loadImage()
+{
+    QPixmap img;
+    img.load("/home/dawid/PolitechnikaWarszawska/PS1/Zaawawansowane_C++/projekt/15puzzle/img/sample1.png");
+    m_image = img;
+    m_puzzle->setup(m_image);
 }
 

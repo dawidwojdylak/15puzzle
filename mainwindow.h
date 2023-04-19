@@ -21,8 +21,11 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    void loadImage();
+
 private:
     Ui::MainWindow *ui;
     QPointer<Puzzle> m_puzzle;
+    QPixmap m_image;
 };
 #endif // MAINWINDOW_H
