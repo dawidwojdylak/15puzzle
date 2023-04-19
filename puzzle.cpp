@@ -16,7 +16,7 @@ void Puzzle::setup(QPixmap img)
         return;
 
 
-    QVector<QPixmap> slices = sliceImage(img);
+    sliceImage(img);
 //    int row = 0;
 //    int col = 0;
 //    for (const QPixmap &slice : slices) {
@@ -41,31 +41,31 @@ void Puzzle::setup(QPixmap img)
 //    //        painter.drawPixmap(p.getRect(), p.getImage());
 //}
 
-QVector<QPixmap> Puzzle::sliceImage(const QPixmap &image)
+void Puzzle::sliceImage(const QPixmap &image)
 {
-    QVector<QPixmap> slices;
     int n = m_sideSize;
     int imageWidth = image.width();
     int imageHeight = image.height();
     int sliceWidth = imageWidth / n;
     int sliceHeight = imageHeight / n;
     int sliceSize = qMin(sliceWidth, sliceHeight); // Use minimum of sliceWidth and sliceHeight as side length for square slices
-
+    int id = 0;
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
             int x = j * sliceWidth;
             int y = i * sliceHeight;
             QPixmap slice = image.copy(x, y, sliceSize, sliceSize); // Use sliceSize for width and height to create square slices
-            slices.append(slice);
+//            auto piece = std::make_shared<Piece>(id++);
+            Piece * piece = new Piece(id++);
+            piece->setPixmap(slice);
+            m_pieces.append(piece);
         }
     }
 
     int row = 0;
     int col = 0;
-    int id = 0;
-    for (const QPixmap &slice : slices) {
-        Piece * piece = new Piece(id++);
-        piece->setPixmap(slice);
+
+    for (auto &piece : m_pieces) {
         m_gridLayout->addWidget(piece, row, col); // Add label to layout with row and column
         col++; // Move to next column
         if (col == 3) {
@@ -74,7 +74,7 @@ QVector<QPixmap> Puzzle::sliceImage(const QPixmap &image)
         }
     }
 
-    return slices;
+//    return slices;
 }
 
 //int imageWidth = image.width();
