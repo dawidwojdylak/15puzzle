@@ -21,12 +21,11 @@ public:
 signals:
 
 protected:
-//    void paintEvent(QPaintEvent *event) override;
-
     void sliceImage(const QPixmap& image);
+    void draw();
+    void shuffle();
 
 private:
-//    QVector<std::shared_ptr<Piece>> m_pieces;
     QVector<Piece*> m_pieces;
     int m_sideSize;
     int m_imageSize;
