@@ -4,12 +4,16 @@
 #include <QObject>
 #include <QPoint>
 #include <QPixmap>
+#include <QLabel>
 
-class Piece : public QObject
+#include <QDebug>
+
+class Piece : public QLabel
 {
     Q_OBJECT
 public:
-    explicit Piece(const QPixmap & img, const QPoint & position, int id, QObject *parent = nullptr);
+    explicit Piece(const QPixmap & img, const QPoint & position, int id, QWidget *parent = nullptr);
+    explicit Piece(int id);
     Piece(const Piece& other);
 
     inline int getId() const { return m_id; }
@@ -18,9 +22,10 @@ public:
     inline QRect getRect() const { return m_rect; }
 signals:
 
-protected:
-    
+    void idChanged(int newId); // Declare custom signal for id change
 
+protected:
+    void mousePressEvent(QMouseEvent* event);
 
 private:
     int m_id;

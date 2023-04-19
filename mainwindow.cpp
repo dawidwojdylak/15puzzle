@@ -10,11 +10,12 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowTitle("15puzzle");
 
     QPointer<QFrame> frame = new QFrame;
-    QPointer<QHBoxLayout> frameLayout = new QHBoxLayout(frame);
+//    QPointer<QHBoxLayout> frameLayout = new QHBoxLayout(frame);
 
-    m_puzzle = new Puzzle();
+    m_puzzle = new Puzzle(3, 400, frame);
 
-    frameLayout->addWidget(m_puzzle);
+    resize(400, 400);
+//    frameLayout->addWidget(m_puzzle);
 
     setCentralWidget(frame);
 

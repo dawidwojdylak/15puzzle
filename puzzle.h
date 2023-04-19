@@ -4,6 +4,8 @@
 #include <QWidget>
 #include <QPainter>
 #include <QPaintEvent>
+#include <QGridLayout>
+#include <QVector>
 #include "piece.h"
 
 class Puzzle : public QWidget
@@ -18,14 +20,16 @@ public:
 signals:
 
 protected:
-    void paintEvent(QPaintEvent *event) override;
+//    void paintEvent(QPaintEvent *event) override;
+
+    QVector<QPixmap> sliceImage(const QPixmap& image);
 
 private:
-    std::vector<Piece> m_pieces;
+    QVector<Piece> m_pieces;
     int m_sideSize;
     int m_imageSize;
-    int m_pieceSize;
     QPixmap m_puzzleImage;
+    QGridLayout *m_gridLayout;
 };
 
 #endif // PUZZLE_H
