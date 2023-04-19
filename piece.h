@@ -13,17 +13,15 @@ class Piece : public QLabel
     Q_OBJECT
 public:
     explicit Piece(const QPixmap & img, const QPoint & position, int id, QWidget *parent = nullptr);
-    explicit Piece(int id);
+    explicit Piece(int id, const QPixmap & img);
     Piece(const Piece& other);
 
     inline int getId() const { return m_id; }
     inline QPoint getPosition() const { return m_position; }
-    inline QPixmap getImage() const { return m_image; }
+    inline QPixmap getImage() const { return m_image.copy(); }
     inline QRect getRect() const { return m_rect; }
 signals:
-
-    void idChanged(int newId); // Declare custom signal for id change
-
+    void moveSelf(int id);
 protected:
     void mousePressEvent(QMouseEvent* event);
 

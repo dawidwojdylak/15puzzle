@@ -17,12 +17,15 @@ public:
 
     void setup(QPixmap img);
 
+public slots:
+    void movePiece(int id);
 
 signals:
 
 protected:
     void sliceImage(const QPixmap& image);
     void draw();
+    void clearPuzzle();
     void shuffle();
 
 private:
