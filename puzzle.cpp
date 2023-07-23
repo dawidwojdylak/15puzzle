@@ -22,76 +22,29 @@ void Puzzle::setup(QPixmap img)
 
 void Puzzle::movePiece(int id)
 {
-//    if (id == 0) // the blank tile
-//    {
-//        return;
-//    }
-
-    qDebug() << "movePiece: " << id;
     int blankTileIndex = -1;
-    int index2 = -1;
+    int movingTileIndex = -1;
     int blankTileId = 0;
-
-
 
     for (int i = 0; i < m_pieces.size(); ++i)
     {
         if (m_pieces[i]->getId() == blankTileId)
             blankTileIndex = i;
         else if (m_pieces[i]->getId() == id)
-            index2 = i;
+            movingTileIndex = i;
 
         // If both elements are found, break out of the loop
-        if (blankTileIndex != -1 && index2 != -1)
+        if (blankTileIndex != -1 && movingTileIndex != -1)
             break;
     }
 
-        qDebug() << "blankTileIndex: " << blankTileIndex << "\nindex2: " << index2;
-
-    if (blankTileIndex != -1 && index2 != -1)
+    if (blankTileIndex != -1 && movingTileIndex != -1)
     {
-        QPixmap blank = m_pieces[blankTileIndex]->getImage().copy();
-        blank.fill(Qt::transparent);
-//        m_pieces[blankTileIndex]->setPixmap(blank);
-
-        Piece * newBlankPiece = new Piece(blankTileId, blank);
-        Piece * newPiece = new Piece(id, m_pieces[index2]->getImage());
-
-        connect(newBlankPiece, &Piece::moveSelf, this, &Puzzle::movePiece);
-        connect(newPiece, &Piece::moveSelf, this, &Puzzle::movePiece);
-
-//        delete m_pieces[blankTileIndex];
-//        delete m_pieces[index2];
-
-//        m_pieces.replace(blankTileIndex, newPiece);
-//        m_pieces.replace(index2, newBlankPiece);
-
-        m_pieces[blankTileIndex] = newPiece;
-        m_pieces[index2] = newBlankPiece;
+        Piece * temp = m_pieces[blankTileIndex];
+        m_pieces[blankTileIndex] = m_pieces[movingTileIndex];
+        m_pieces[movingTileIndex] = temp;
 
     }
-
-//    if (id != 0) // the blank tile
-//    {
-//        // find index of
-//        for (int i = 0; i < m_pieces.size(); ++i)
-//        {
-//            qDebug() << m_pieces[i]->getId();
-//            if (m_pieces[i]->getId() == id)
-//            {
-//                m_pieces.replace(0, m_pieces[i]);
-//                break;
-//            }
-//        }
-//    }
-
-
-    // debug vec printing
-    for (const auto & i : m_pieces)
-        qDebug() << "id: " << i->getId();
-
-//    m_pieces.clear();
-//    clearPuzzle();
 
     draw();
 }

@@ -30,7 +30,7 @@ MainWindow::~MainWindow()
 void MainWindow::loadImage()
 {
     QPixmap img;
-    img.load("/home/dawid/PolitechnikaWarszawska/PS1/Zaawawansowane_C++/projekt/15puzzle/img/sample1.png");
+    img.load("./img/sample1.png");
     m_image = img;
     m_puzzle->setup(m_image);
 }

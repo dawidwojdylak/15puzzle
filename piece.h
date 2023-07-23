@@ -14,7 +14,7 @@ class Piece : public QLabel
 public:
     explicit Piece(const QPixmap & img, const QPoint & position, int id, QWidget *parent = nullptr);
     explicit Piece(int id, const QPixmap & img);
-    Piece(const Piece& other);
+//    Piece(const Piece& other);
 
     inline int getId() const { return m_id; }
     inline QPoint getPosition() const { return m_position; }
