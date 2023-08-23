@@ -1,11 +1,11 @@
 #include "piece.h"
 
-Piece::Piece(const QPixmap & img, const QPoint & position, int id, QWidget *parent)
-    : QLabel{parent}, m_id{id}
-{
-    m_image = img;
-    m_position = position;
-}
+// Piece::Piece(const QPixmap & img, const QPoint & position, int id, QWidget *parent)
+//     : QLabel{parent}, m_id{id}
+// {
+//     m_image = img;
+//     m_position = position;
+// }
 
 Piece::Piece(int id, const QPixmap & img) : m_id{id}, m_image{img}
 {
@@ -20,7 +20,7 @@ Piece::Piece(int id, const QPixmap & img) : m_id{id}, m_image{img}
 
 void Piece::mousePressEvent(QMouseEvent *event)
 {
-//    qDebug() << "piece: "  << m_id;
+   qDebug() << "piece: "  << m_id;
     emit moveSelf(m_id);
     QLabel::mousePressEvent(event);
 

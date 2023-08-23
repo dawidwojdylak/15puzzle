@@ -1,4 +1,5 @@
 #include "puzzle.h"
+#include <QtMath>
 
 
 Puzzle::Puzzle(int sideSize, int imageSize, QWidget *parent)
@@ -16,6 +17,7 @@ void Puzzle::setup(QPixmap img)
 
 
     sliceImage(img);
+    setFirstBlank();
     shuffle();
     draw();
 }
@@ -38,12 +40,19 @@ void Puzzle::movePiece(int id)
             break;
     }
 
-    if (blankTileIndex != -1 && movingTileIndex != -1)
-    {
-        Piece * temp = m_pieces[blankTileIndex];
-        m_pieces[blankTileIndex] = m_pieces[movingTileIndex];
-        m_pieces[movingTileIndex] = temp;
+    // if ( (qFabs(blankTileIndex - movingTileIndex) != 1) and (qFabs(blankTileIndex - movingTileIndex) != m_sideSize) )
 
+    // Check, if selected tiles are neighbors
+    if ( (qFabs(blankTileIndex - movingTileIndex) == 1) or (qFabs(blankTileIndex - movingTileIndex) == m_sideSize) )
+    {
+        // Swap the tiles
+        if (blankTileIndex != -1 && movingTileIndex != -1)
+        {
+            Piece * temp = m_pieces[blankTileIndex];
+            m_pieces[blankTileIndex] = m_pieces[movingTileIndex];
+            m_pieces[movingTileIndex] = temp;
+
+        }
     }
 
     draw();
@@ -67,6 +76,12 @@ void Puzzle::sliceImage(const QPixmap &image)
             int x = j * sliceWidth;
             int y = i * sliceHeight;
             QPixmap slice = image.copy(x, y, sliceSize, sliceSize);
+
+            /* debug */
+            QPainter tempPainter(&slice);
+            tempPainter.setFont( QFont("Arial") );
+            tempPainter.drawText(QPoint(100, 100), QString::number(id));
+
             Piece * piece = new Piece(id++, slice);
             connect(piece, &Piece::moveSelf, this, &Puzzle::movePiece);
             m_pieces.append(piece);
@@ -125,9 +140,12 @@ void Puzzle::clearPuzzle()
 
 void Puzzle::shuffle()
 {
+
+}
+
+void Puzzle::setFirstBlank()
+{
     QPixmap blank(m_pieces[0]->getImage().width(), m_pieces[0]->getImage().height());
     blank.fill(Qt::transparent);
     m_pieces[0]->setPixmap(blank);
 }
-
-

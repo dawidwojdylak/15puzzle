@@ -27,6 +27,7 @@ protected:
     void draw();
     void clearPuzzle();
     void shuffle();
+    void setFirstBlank();
 
 private:
     QVector<Piece*> m_pieces;
