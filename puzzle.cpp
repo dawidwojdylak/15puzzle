@@ -27,7 +27,41 @@ void Puzzle::setup(QPixmap img)
     draw();
 }
 
-void Puzzle::movePiece(int id)
+void Puzzle::movePieceByKey(Key k)
+{
+    int blankIdx = 0;
+    // find the blank piece
+    for (const Piece * piece : m_pieces)
+    {
+        blankIdx++;
+        if (piece->getId() == 0)
+            break;
+    }
+
+    qDebug() << "blank idx:" << blankIdx;
+    switch (k)
+    {
+    case KEY_DOWN:
+        swapPieces(blankIdx, blankIdx - m_sideSize);
+        break;
+    case KEY_UP:
+        swapPieces(blankIdx, blankIdx + m_sideSize);
+        break;
+    case KEY_LEFT:
+        swapPieces(blankIdx, blankIdx - 1);
+        break;
+    case KEY_RIGHT:
+        swapPieces(blankIdx, blankIdx + 1);
+        break;
+    
+    default:
+        break;
+    }
+
+
+}
+
+void Puzzle::movePieceById(int id)
 {
     int blankTileIndex = -1;
     int movingTileIndex = -1;
@@ -45,20 +79,7 @@ void Puzzle::movePiece(int id)
             break;
     }
 
-    // if ( (qFabs(blankTileIndex - movingTileIndex) != 1) and (qFabs(blankTileIndex - movingTileIndex) != m_sideSize) )
-
-    // Check, if selected tiles are neighbors
-    if ( (qFabs(blankTileIndex - movingTileIndex) == 1) or (qFabs(blankTileIndex - movingTileIndex) == m_sideSize) )
-    {
-        // Swap the tiles
-        if (blankTileIndex != -1 && movingTileIndex != -1)
-        {
-            Piece * temp = m_pieces[blankTileIndex];
-            m_pieces[blankTileIndex] = m_pieces[movingTileIndex];
-            m_pieces[movingTileIndex] = temp;
-
-        }
-    }
+    swapPieces(blankTileIndex, movingTileIndex);
 
     draw();
     checkIfFinished();
@@ -89,7 +110,7 @@ void Puzzle::sliceImage(const QPixmap &image)
             tempPainter.drawText(QPoint(100, 100), QString::number(id));
 
             Piece * piece = new Piece(id++, slice);
-            connect(piece, &Piece::moveSelf, this, &Puzzle::movePiece);
+            connect(piece, &Piece::moveSelf, this, &Puzzle::movePieceById);
             m_pieces.append(piece);
         }
     }
@@ -128,18 +149,17 @@ void Puzzle::shuffle()
         int j = 0;
         for (const Piece * piece : m_pieces)
         {
-            // find blank piece
+            // find the blank piece
             if (piece->getId() == 0)
             {
                 // get random tile to swap
                 int possibleIndices[4] = {j+1, j-1, j+m_sideSize, j-m_sideSize};
                 int randomIndex = std::rand() % 4;
-                movePiece(possibleIndices[randomIndex]);
+                movePieceById(possibleIndices[randomIndex]);
                 break;
             }
             j++;
         }
-
     }
 }
 
@@ -169,5 +189,21 @@ void Puzzle::checkIfFinished() const
         QMessageBox msgBox;
         msgBox.setText("Congratulations!");
         msgBox.exec();
+    }
+}
+
+void Puzzle::swapPieces(int blankTileIndex, int movingTileIndex)
+{
+    // Check, if selected tiles are neighbors
+    if ( (qFabs(blankTileIndex - movingTileIndex) == 1) or (qFabs(blankTileIndex - movingTileIndex) == m_sideSize) )
+    {
+        // Swap the tiles
+        if (blankTileIndex != -1 && movingTileIndex != -1)
+        {
+            Piece * temp = m_pieces[blankTileIndex];
+            m_pieces[blankTileIndex] = m_pieces[movingTileIndex];
+            m_pieces[movingTileIndex] = temp;
+
+        }
     }
 }

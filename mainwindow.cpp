@@ -31,7 +31,15 @@ void MainWindow::loadImage(const QString & imgPath)
 {
     QPixmap img;
     img.load(imgPath);
-    m_image = img;
+    
+    // crop the image to square
+    int sideLength = qMin(img.width(), img.height());
+    QPixmap imgSqr(sideLength, sideLength);
+
+    QPainter painter(&imgSqr);
+    painter.drawImage((sideLength - img.width()) / 2, (sideLength - img.height()) / 2, img.toImage());
+
+    m_image = imgSqr;
     m_puzzle->clearPuzzle();
     m_puzzle->setup(m_image);
 }
@@ -41,4 +49,26 @@ void MainWindow::onActionOpenTriggered()
     QString filter = "Images (*.png *.jpg *.jpeg *.bmp *.gif)";
     QString path = QFileDialog::getOpenFileName(this, "Open Image", "", filter);
     loadImage(path);
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    switch (event->key()) 
+    {
+        case Qt::Key_Down:
+            m_puzzle->movePieceByKey(Puzzle::KEY_DOWN);
+            break;
+        case Qt::Key_Up:
+            m_puzzle->movePieceByKey(Puzzle::KEY_UP);
+            break;
+        case Qt::Key_Left:
+            m_puzzle->movePieceByKey(Puzzle::KEY_LEFT);
+            break;
+        case Qt::Key_Right:
+            m_puzzle->movePieceByKey(Puzzle::KEY_RIGHT);
+            break;
+        default:
+            QMainWindow::keyPressEvent(event); 
+            break;
+    }
 }

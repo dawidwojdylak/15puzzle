@@ -9,19 +9,28 @@
 #include <memory>
 #include "piece.h"
 
-#define SHUFFLE_STEPS 10
+#define SHUFFLE_STEPS 30
+
 
 class Puzzle : public QWidget
 {
     Q_OBJECT
 public:
+    enum Key {
+        KEY_DOWN,
+        KEY_UP,
+        KEY_LEFT,
+        KEY_RIGHT
+    };
+
     explicit Puzzle(int sideSize = 3, int imageSize = 400, QWidget *parent = nullptr);
 
     void setup(QPixmap img);
     void clearPuzzle();
+    void movePieceByKey(Key k);
 
 public slots:
-    void movePiece(int id);
+    void movePieceById(int id);
 
 signals:
 
@@ -31,6 +40,7 @@ protected:
     void shuffle();
     void setFirstBlank();
     void checkIfFinished() const;
+    void swapPieces(int blankTileIndex, int movingTileIndex);
 
 private:
     QVector<Piece*> m_pieces;

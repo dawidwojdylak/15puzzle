@@ -20,8 +20,6 @@ Piece::Piece(int id, const QPixmap & img) : m_id{id}, m_image{img}
 
 void Piece::mousePressEvent(QMouseEvent *event)
 {
-   qDebug() << "piece: "  << m_id;
     emit moveSelf(m_id);
     QLabel::mousePressEvent(event);
-
 }

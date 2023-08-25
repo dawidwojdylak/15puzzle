@@ -27,6 +27,9 @@ public:
 private slots:
     void onActionOpenTriggered();
 
+protected:
+    void keyPressEvent(QKeyEvent *event) override;
+
 private:
     Ui::MainWindow *ui;
     QPointer<Puzzle> m_puzzle;
