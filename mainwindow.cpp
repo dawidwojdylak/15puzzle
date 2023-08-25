@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     QPointer<QFrame> frame = new QFrame;
-    m_puzzle = new Puzzle(5, 400, frame);
+    m_puzzle = new Puzzle(3, 400, frame);
     resize(400, 400);
     setCentralWidget(frame);
 

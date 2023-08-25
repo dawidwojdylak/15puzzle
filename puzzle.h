@@ -9,6 +9,8 @@
 #include <memory>
 #include "piece.h"
 
+#define SHUFFLE_STEPS 10
+
 class Puzzle : public QWidget
 {
     Q_OBJECT

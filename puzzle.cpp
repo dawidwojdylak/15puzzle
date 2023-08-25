@@ -1,6 +1,8 @@
 #include "puzzle.h"
 #include <QtMath>
 #include <QMessageBox>
+#include <cstdlib>
+#include <ctime>
 
 
 Puzzle::Puzzle(int sideSize, int imageSize, QWidget *parent)
@@ -9,6 +11,8 @@ Puzzle::Puzzle(int sideSize, int imageSize, QWidget *parent)
     setMinimumSize(m_imageSize, m_imageSize);
     setMaximumSize(m_imageSize, m_imageSize);
     m_gridLayout = new QGridLayout(parent);
+
+    std::srand(static_cast<unsigned int>(std::time(nullptr)));
 }
 
 void Puzzle::setup(QPixmap img)
@@ -119,7 +123,24 @@ void Puzzle::clearPuzzle()
 
 void Puzzle::shuffle()
 {
+    for (int i = 0; i < SHUFFLE_STEPS; ++i)
+    {
+        int j = 0;
+        for (const Piece * piece : m_pieces)
+        {
+            // find blank piece
+            if (piece->getId() == 0)
+            {
+                // get random tile to swap
+                int possibleIndices[4] = {j+1, j-1, j+m_sideSize, j-m_sideSize};
+                int randomIndex = std::rand() % 4;
+                movePiece(possibleIndices[randomIndex]);
+                break;
+            }
+            j++;
+        }
 
+    }
 }
 
 void Puzzle::setFirstBlank()
