@@ -8,6 +8,7 @@
 #include "user.h"
 #include "puzzle.h"
 
+#define DEFAULT_IMAGE_PATH "./img/sample1.png"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -21,7 +22,10 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    void loadImage();
+    void loadImage(const QString & imgPath);
+
+private slots:
+    void onActionOpenTriggered();
 
 private:
     Ui::MainWindow *ui;

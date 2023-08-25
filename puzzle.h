@@ -16,6 +16,7 @@ public:
     explicit Puzzle(int sideSize = 3, int imageSize = 400, QWidget *parent = nullptr);
 
     void setup(QPixmap img);
+    void clearPuzzle();
 
 public slots:
     void movePiece(int id);
@@ -25,9 +26,9 @@ signals:
 protected:
     void sliceImage(const QPixmap& image);
     void draw();
-    void clearPuzzle();
     void shuffle();
     void setFirstBlank();
+    void checkIfFinished() const;
 
 private:
     QVector<Piece*> m_pieces;

@@ -1,5 +1,6 @@
 #include "puzzle.h"
 #include <QtMath>
+#include <QMessageBox>
 
 
 Puzzle::Puzzle(int sideSize, int imageSize, QWidget *parent)
@@ -56,6 +57,7 @@ void Puzzle::movePiece(int id)
     }
 
     draw();
+    checkIfFinished();
 }
 
 
@@ -106,36 +108,13 @@ void Puzzle::draw()
 
 void Puzzle::clearPuzzle()
 {
-//    QLayoutItem* item;
-//    while ((item = m_gridLayout->takeAt(0)) != nullptr)
-//    {
-//        m_gridLayout->removeItem(item);
-//        delete item->widget(); // Delete the widget associated with the item
-//        delete item; // Delete the item
-//    }
-//    update();
-//    repaint();
-//    m_gridLayout->update();
-
-//    while (QLayoutItem* item = m_gridLayout->takeAt(0)) {
-//        QWidget* widget = item->widget();
-//        if (widget) {
-//            m_gridLayout->removeWidget(widget);
-//            delete widget;
-//        }
-//        delete item;
-//    }
-
-//    QLayoutItem* item;
-//    while ((item = m_gridLayout->takeAt(0)) != nullptr)
-//    {
-//        QWidget* widget = item->widget();
-//        m_gridLayout->removeItem(item);
-////        delete widget;
-//    }
-//        update();
-//        repaint();
-
+    QLayoutItem *oldPieceItem;
+    while ((oldPieceItem = m_gridLayout->takeAt(0)) != nullptr) 
+    {
+        delete oldPieceItem->widget(); 
+        delete oldPieceItem;
+    }
+    m_pieces.clear();
 }
 
 void Puzzle::shuffle()
@@ -148,4 +127,26 @@ void Puzzle::setFirstBlank()
     QPixmap blank(m_pieces[0]->getImage().width(), m_pieces[0]->getImage().height());
     blank.fill(Qt::transparent);
     m_pieces[0]->setPixmap(blank);
+}
+
+void Puzzle::checkIfFinished() const
+{
+    bool finished = true;
+    int i = 0;
+    for (const Piece * p : m_pieces)
+    {
+        if (p->getId() != i)
+        {
+            finished = false;
+            break;
+        }
+        i++;
+    }
+
+    if (finished)
+    {
+        QMessageBox msgBox;
+        msgBox.setText("Congratulations!");
+        msgBox.exec();
+    }
 }
