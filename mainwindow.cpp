@@ -6,29 +6,19 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+    , m_steps(0), m_seconds(0)
 {
     ui->setupUi(this);
     setWindowTitle("15puzzle");
 
     m_optionsDialog = new OptionsDialog(this);
     m_gameTimer = new GameTimer(this);
-    m_timerLabel = new QLabel("Elapsed time: 0 seconds");
+    m_timerLabel = new QLabel("Steps: 0; Elapsed time: 0 seconds");
     m_pauseMessageBox = new PauseMessageBox();
     m_pauseMessageBox->setText("Game paused");
     
     
     this->statusBar()->addPermanentWidget(m_timerLabel);
-
-
-    /* connects */
-    connect(ui->actionOpen, &QAction::triggered, this, &MainWindow::onActionOpenTriggered);
-    connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::toggleTimer);
-    connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::openOptionsDialog);
-    connect(m_optionsDialog, &QDialog::finished, this, &MainWindow::toggleTimer);
-    connect(m_gameTimer, &GameTimer::timeUpdated, this, &MainWindow::updateStatusBar);
-    connect(m_pauseMessageBox, &QMessageBox::accepted, this, &MainWindow::toggleTimer);
-
-
 
     QPointer<QFrame> frame = new QFrame;
     m_puzzle = new Puzzle(3, 400, frame);
@@ -37,6 +27,15 @@ MainWindow::MainWindow(QWidget *parent)
 
     loadImage(DEFAULT_IMAGE_PATH);
     m_gameTimer->start();
+
+    /* connects */
+    connect(ui->actionOpen, &QAction::triggered, this, &MainWindow::onActionOpenTriggered);
+    connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::toggleTimer);
+    connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::openOptionsDialog);
+    connect(m_optionsDialog, &QDialog::finished, this, &MainWindow::toggleTimer);
+    connect(m_gameTimer, &GameTimer::timeUpdated, this, &MainWindow::updateStatusBar);
+    connect(m_pauseMessageBox, &QMessageBox::accepted, this, &MainWindow::toggleTimer);
+    connect(m_puzzle, &Puzzle::updateSteps, this, &MainWindow::updateStatusBarWithSteps);
 }
 
 MainWindow::~MainWindow()
@@ -73,7 +72,8 @@ void MainWindow::openOptionsDialog()
     m_optionsDialog->exec();
 }
 
-void MainWindow::toggleTimer() {
+void MainWindow::toggleTimer() 
+{
     qDebug() << "toggle " << m_gameTimer->isActive();
     if (m_gameTimer->isActive()) {
         m_gameTimer->pause();
@@ -82,12 +82,23 @@ void MainWindow::toggleTimer() {
     }
 }
 
-void MainWindow::resetTimer() {
+void MainWindow::resetTimer() 
+{
     m_gameTimer->reset();
 }
 
-void MainWindow::updateStatusBar(int seconds) {
-    m_timerLabel->setText("Elapsed time: " + QString::number(seconds) + " seconds");
+void MainWindow::updateStatusBar(int seconds) 
+{
+    m_seconds = seconds;
+    m_timerLabel->setText("Steps: " + QString::number(m_steps) 
+        + "; Elapsed time: " + QString::number(m_seconds) + " seconds");
+}
+
+void MainWindow::updateStatusBarWithSteps(int steps)
+{
+    m_steps = steps;
+    m_timerLabel->setText("Steps: " + QString::number(m_steps) 
+        + "; Elapsed time: " + QString::number(m_seconds) + " seconds");
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
@@ -114,6 +125,14 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
             toggleTimer();
             m_pauseMessageBox->exec();
             break; 
+        case Qt::Key_O:
+            toggleTimer();
+            openOptionsDialog();
+            break;
+        case Qt::Key_Z:
+            if (event->modifiers() == Qt::ControlModifier) {
+            }
+            break;
         default:
             QMainWindow::keyPressEvent(event); 
             break;

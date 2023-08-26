@@ -34,6 +34,7 @@ private slots:
     void toggleTimer();
     void resetTimer();
     void updateStatusBar(int seconds);
+    void updateStatusBarWithSteps(int steps);
 
 protected:
     void keyPressEvent(QKeyEvent *event) override;
@@ -57,6 +58,8 @@ private:
     GameTimer * m_gameTimer;
     QLabel * m_timerLabel;
     PauseMessageBox * m_pauseMessageBox;
+    int m_steps;
+    int m_seconds;
 
 };
 #endif // MAINWINDOW_H

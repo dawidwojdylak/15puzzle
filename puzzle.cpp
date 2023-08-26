@@ -6,7 +6,7 @@
 
 
 Puzzle::Puzzle(int sideSize, int imageSize, QWidget *parent)
-    : QWidget{parent}, m_sideSize(sideSize), m_imageSize(imageSize)
+    : QWidget{parent}, m_sideSize(sideSize), m_imageSize(imageSize), m_userSteps(0)
 {
     setMinimumSize(m_imageSize, m_imageSize);
     setMaximumSize(m_imageSize, m_imageSize);
@@ -61,12 +61,12 @@ void Puzzle::movePieceByKey(Key k)
 
     if (blankIdx <= m_pieces.size() and pieceToBeMovedIdx <= m_pieces.size() and blankIdx >= 0 and pieceToBeMovedIdx >= 0) 
     {
-        swapPieces(blankIdx, pieceToBeMovedIdx);
+        swapPieces(blankIdx, pieceToBeMovedIdx, true);
     }
 
 }
 
-void Puzzle::movePieceById(int id, bool checkIfFinishedFlag)
+void Puzzle::movePieceById(int id, bool userMove)
 {
     int blankTileIndex = -1;
     int movingTileIndex = -1;
@@ -84,10 +84,10 @@ void Puzzle::movePieceById(int id, bool checkIfFinishedFlag)
             break;
     }
 
-    swapPieces(blankTileIndex, movingTileIndex);
+    swapPieces(blankTileIndex, movingTileIndex, userMove);
 
 
-    if (checkIfFinishedFlag)
+    if (userMove)
         checkIfFinished();
 }
 
@@ -198,7 +198,7 @@ void Puzzle::checkIfFinished() const
     }
 }
 
-void Puzzle::swapPieces(int blankTileIndex, int movingTileIndex)
+void Puzzle::swapPieces(int blankTileIndex, int movingTileIndex, bool userMove)
 {
     if (m_pieces.size() - blankTileIndex <= 0 or m_pieces.size() - movingTileIndex <= 0)
         return;
@@ -220,7 +220,12 @@ void Puzzle::swapPieces(int blankTileIndex, int movingTileIndex)
             Piece * temp = m_pieces[blankTileIndex];
             m_pieces[blankTileIndex] = m_pieces[movingTileIndex];
             m_pieces[movingTileIndex] = temp;
-
+            if (userMove)
+            {
+                m_userSteps++;
+                emit updateSteps(m_userSteps);
+                qDebug() << userMove << " user Move " << m_userSteps;
+            }
         }
     }
 

@@ -30,9 +30,10 @@ public:
     void movePieceByKey(Key k);
 
 public slots:
-    void movePieceById(int id, bool checkIfFinishedFlag = true);
+    void movePieceById(int id, bool userMove = true);
 
 signals:
+    void updateSteps(int step);
 
 protected:
     void sliceImage(const QPixmap& image);
@@ -40,7 +41,7 @@ protected:
     void shuffle();
     void setFirstBlank();
     void checkIfFinished() const;
-    void swapPieces(int blankTileIndex, int movingTileIndex);
+    void swapPieces(int blankTileIndex, int movingTileIndex, bool userMove = false);
 
 private:
     QVector<Piece*> m_pieces;
@@ -48,6 +49,7 @@ private:
     int m_imageSize;
     QPixmap m_puzzleImage;
     QGridLayout *m_gridLayout;
+    unsigned int m_userSteps;
 };
 
 #endif // PUZZLE_H

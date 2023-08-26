@@ -6,6 +6,7 @@ OptionsDialog::OptionsDialog(QWidget *parent) : QDialog(parent) {
 
     QLabel *playerNameLabel = new QLabel("Player Name:");
     playerNameLineEdit = new QLineEdit(); 
+    playerNameLineEdit->insert("Player 1");
 
     QLabel *gridSizeLabel = new QLabel("Side size:");
     gridSizeComboBox = new QComboBox;
