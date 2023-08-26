@@ -9,6 +9,7 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    gametimer.cpp \
     main.cpp \
     mainwindow.cpp \
     optionsdialog.cpp \
@@ -17,6 +18,7 @@ SOURCES += \
     user.cpp
 
 HEADERS += \
+    gametimer.h \
     mainwindow.h \
     optionsdialog.h \
     piece.h \

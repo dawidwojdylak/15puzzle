@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QFileDialog>
+#include <QTimer>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -9,12 +10,23 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     setWindowTitle("15puzzle");
 
-    m_optionsDialog = new OptionsDialog();
+    m_optionsDialog = new OptionsDialog(this);
+    m_gameTimer = new GameTimer(this);
+    m_timerLabel = new QLabel("Elapsed time: 0 seconds");
+    m_pauseMessageBox = new PauseMessageBox();
+    m_pauseMessageBox->setText("Game paused");
+    
+    
+    this->statusBar()->addPermanentWidget(m_timerLabel);
 
 
     /* connects */
     connect(ui->actionOpen, &QAction::triggered, this, &MainWindow::onActionOpenTriggered);
     connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::openOptionsDialog);
+    connect(m_gameTimer, &GameTimer::timeUpdated, this, &MainWindow::updateStatusBar);
+    // connect(m_pauseMessageBox, &QMessageBox::accepted, m_gameTimer, &GameTimer::toggleTimer);
+    // connect(m_pauseMessageBox, &QMessageBox::accepted, m_gameTimer, &QTimer::toggleTimer);
+    connect(m_pauseMessageBox, &QMessageBox::accepted, this, &MainWindow::toggleTimer);
 
 
 
@@ -24,6 +36,7 @@ MainWindow::MainWindow(QWidget *parent)
     setCentralWidget(frame);
 
     loadImage(DEFAULT_IMAGE_PATH);
+    m_gameTimer->start();
 }
 
 MainWindow::~MainWindow()
@@ -60,6 +73,22 @@ void MainWindow::openOptionsDialog()
     m_optionsDialog->exec();
 }
 
+void MainWindow::toggleTimer() {
+    if (m_gameTimer->isActive()) {
+        m_gameTimer->pause();
+    } else {
+        m_gameTimer->start();
+    }
+}
+
+void MainWindow::resetTimer() {
+    m_gameTimer->reset();
+}
+
+void MainWindow::updateStatusBar(int seconds) {
+    m_timerLabel->setText("Elapsed time: " + QString::number(seconds) + " seconds");
+}
+
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) 
@@ -81,7 +110,8 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
             m_puzzle->movePieceByKey(Puzzle::KEY_RIGHT);
             break;
         case Qt::Key_P:
-            // TODO: implement pause
+            toggleTimer();
+            m_pauseMessageBox->exec();
             break; 
         default:
             QMainWindow::keyPressEvent(event); 
