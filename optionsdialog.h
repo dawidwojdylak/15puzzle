@@ -2,6 +2,13 @@
 #define OPTIONSDIALOG_H
 
 #include <QDialog>
+#include <QComboBox>
+#include <QLabel>
+#include <QPushButton>
+#include <QCheckBox>
+#include <QVBoxLayout>
+#include <QLineEdit>
+#include <QTextEdit>
 
 class OptionsDialog : public QDialog
 {
@@ -17,8 +24,18 @@ private slots:
         emit loadImageRequested();
     }
 
-signals:
+    void playerNameChanged(const QString &text); 
+    void saveGameStateClicked(); 
+    void loadGameStateClicked(); 
+    void pauseGameToggled(bool checked); 
+    void gridSizeChanged(int index); 
 
+private:
+    QLineEdit *playerNameLineEdit;
+    QPushButton *saveGameStateButton;
+    QPushButton *loadGameStateButton;
+    QCheckBox *pauseGameCheckBox;
+    QComboBox *gridSizeComboBox;
 };
 
 #endif // OPTIONSDIALOG_H
