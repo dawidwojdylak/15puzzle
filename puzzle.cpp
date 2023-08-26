@@ -29,35 +29,40 @@ void Puzzle::setup(QPixmap img)
 
 void Puzzle::movePieceByKey(Key k)
 {
-    int blankIdx = 0;
+    int blankIdx = -1;
     // find the blank piece
-    for (const Piece * piece : m_pieces)
-    {
-        blankIdx++;
-        if (piece->getId() == 0)
+    for (int i = 0; i < m_pieces.size(); ++i)
+        if (m_pieces[i]->getId() == 0)
+        {
+            blankIdx = i;
             break;
-    }
+        }
 
-    qDebug() << "blank idx:" << blankIdx;
+
+    int pieceToBeMovedIdx = -1;
     switch (k)
     {
     case KEY_DOWN:
-        // swapPieces(blankIdx, blankIdx - m_sideSize);
+        pieceToBeMovedIdx = blankIdx - m_sideSize;
         break;
     case KEY_UP:
-        // swapPieces(blankIdx, blankIdx + m_sideSize);
+        pieceToBeMovedIdx = blankIdx + m_sideSize;
         break;
     case KEY_LEFT:
-        // swapPieces(blankIdx, blankIdx - 1);
+        pieceToBeMovedIdx = blankIdx + 1;
         break;
     case KEY_RIGHT:
-        // swapPieces(blankIdx, blankIdx + 1);
+        pieceToBeMovedIdx = blankIdx - 1;
         break;
     
     default:
         break;
     }
 
+    if (blankIdx <= m_pieces.size() and pieceToBeMovedIdx <= m_pieces.size() and blankIdx >= 0 and pieceToBeMovedIdx >= 0) 
+    {
+        swapPieces(blankIdx, pieceToBeMovedIdx);
+    }
 
 }
 
@@ -65,7 +70,7 @@ void Puzzle::movePieceById(int id, bool checkIfFinishedFlag)
 {
     int blankTileIndex = -1;
     int movingTileIndex = -1;
-    int blankTileId = 0;
+    const int blankTileId = 0;
 
     for (int i = 0; i < m_pieces.size(); ++i)
     {
@@ -81,7 +86,6 @@ void Puzzle::movePieceById(int id, bool checkIfFinishedFlag)
 
     swapPieces(blankTileIndex, movingTileIndex);
 
-    draw();
 
     if (checkIfFinishedFlag)
         checkIfFinished();
@@ -196,6 +200,9 @@ void Puzzle::checkIfFinished() const
 
 void Puzzle::swapPieces(int blankTileIndex, int movingTileIndex)
 {
+    if (m_pieces.size() - blankTileIndex <= 0 or m_pieces.size() - movingTileIndex <= 0)
+        return;
+
     // Check, if selected tiles are neighbors
     if ( (qFabs(blankTileIndex - movingTileIndex) == 1) or (qFabs(blankTileIndex - movingTileIndex) == m_sideSize) )
     {
@@ -216,4 +223,6 @@ void Puzzle::swapPieces(int blankTileIndex, int movingTileIndex)
 
         }
     }
+
+    draw();
 }

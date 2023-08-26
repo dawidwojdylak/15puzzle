@@ -55,18 +55,25 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) 
     {
+        case Qt::Key_S:
         case Qt::Key_Down:
             m_puzzle->movePieceByKey(Puzzle::KEY_DOWN);
             break;
+        case Qt::Key_W:
         case Qt::Key_Up:
             m_puzzle->movePieceByKey(Puzzle::KEY_UP);
             break;
+        case Qt::Key_A:
         case Qt::Key_Left:
             m_puzzle->movePieceByKey(Puzzle::KEY_LEFT);
             break;
+        case Qt::Key_D:
         case Qt::Key_Right:
             m_puzzle->movePieceByKey(Puzzle::KEY_RIGHT);
             break;
+        case Qt::Key_P:
+            // TODO: implement pause
+            break; 
         default:
             QMainWindow::keyPressEvent(event); 
             break;
