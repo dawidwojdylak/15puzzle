@@ -27,14 +27,12 @@ private slots:
     void playerNameChanged(const QString &text); 
     void saveGameStateClicked(); 
     void loadGameStateClicked(); 
-    void pauseGameToggled(bool checked); 
     void gridSizeChanged(int index); 
 
 private:
     QLineEdit *playerNameLineEdit;
     QPushButton *saveGameStateButton;
     QPushButton *loadGameStateButton;
-    QCheckBox *pauseGameCheckBox;
     QComboBox *gridSizeComboBox;
 };
 

@@ -22,10 +22,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     /* connects */
     connect(ui->actionOpen, &QAction::triggered, this, &MainWindow::onActionOpenTriggered);
+    connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::toggleTimer);
     connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::openOptionsDialog);
+    connect(m_optionsDialog, &QDialog::finished, this, &MainWindow::toggleTimer);
     connect(m_gameTimer, &GameTimer::timeUpdated, this, &MainWindow::updateStatusBar);
-    // connect(m_pauseMessageBox, &QMessageBox::accepted, m_gameTimer, &GameTimer::toggleTimer);
-    // connect(m_pauseMessageBox, &QMessageBox::accepted, m_gameTimer, &QTimer::toggleTimer);
     connect(m_pauseMessageBox, &QMessageBox::accepted, this, &MainWindow::toggleTimer);
 
 
@@ -74,6 +74,7 @@ void MainWindow::openOptionsDialog()
 }
 
 void MainWindow::toggleTimer() {
+    qDebug() << "toggle " << m_gameTimer->isActive();
     if (m_gameTimer->isActive()) {
         m_gameTimer->pause();
     } else {

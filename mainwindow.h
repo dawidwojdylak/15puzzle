@@ -39,15 +39,14 @@ protected:
     void keyPressEvent(QKeyEvent *event) override;
 
 private:
-    struct PauseMessageBox : public QMessageBox {
+    struct PauseMessageBox : public QMessageBox 
+    {
     protected:
-        void keyPressEvent(QKeyEvent *event) override {
-            if (event->key() == Qt::Key_P) {
+        void keyPressEvent(QKeyEvent *event) override 
+        {
+            if (event->key() == Qt::Key_P) 
                 accept();
-            }
-            else {
-                QMessageBox::keyPressEvent(event);
-            }
+            else QMessageBox::keyPressEvent(event);
         }
     };
 

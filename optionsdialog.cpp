@@ -22,9 +22,6 @@ OptionsDialog::OptionsDialog(QWidget *parent) : QDialog(parent) {
     QPushButton *loadImageBtn = new QPushButton("Load Image");
     connect(loadImageBtn, &QPushButton::clicked, this, &OptionsDialog::loadImageClicked);
 
-    pauseGameCheckBox = new QCheckBox("Pause Game"); 
-    connect(pauseGameCheckBox, &QCheckBox::toggled, this, &OptionsDialog::pauseGameToggled);
-
     QLabel *rankingLabel = new QLabel("Ranking:");
     QTextEdit *rankingTextEdit = new QTextEdit();
 
@@ -39,7 +36,6 @@ OptionsDialog::OptionsDialog(QWidget *parent) : QDialog(parent) {
     layout->addWidget(saveGameStateButton);
     layout->addWidget(loadGameStateButton);
     layout->addWidget(loadImageBtn);
-    layout->addWidget(pauseGameCheckBox);
     layout->addWidget(rankingLabel);
     layout->addWidget(rankingTextEdit);
 
@@ -58,9 +54,6 @@ void OptionsDialog::loadGameStateClicked() {
     qDebug() << "loadGameStateClicked";
 }
 
-void OptionsDialog::pauseGameToggled(bool checked) {
-    qDebug() << "pauseGameToggled";
-}
 
 void OptionsDialog::gridSizeChanged(int index) {
     qDebug() << "gridSizeChanged";
