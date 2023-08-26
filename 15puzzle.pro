@@ -11,12 +11,14 @@ CONFIG += c++17
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
+    optionsdialog.cpp \
     piece.cpp \
     puzzle.cpp \
     user.cpp
 
 HEADERS += \
     mainwindow.h \
+    optionsdialog.h \
     piece.h \
     puzzle.h \
     user.h

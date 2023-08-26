@@ -9,8 +9,12 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     setWindowTitle("15puzzle");
 
+    m_optionsDialog = new OptionsDialog();
+
+
     /* connects */
     connect(ui->actionOpen, &QAction::triggered, this, &MainWindow::onActionOpenTriggered);
+    connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::openOptionsDialog);
 
 
 
@@ -49,6 +53,11 @@ void MainWindow::onActionOpenTriggered()
     QString filter = "Images (*.png *.jpg *.jpeg *.bmp *.gif)";
     QString path = QFileDialog::getOpenFileName(this, "Open Image", "", filter);
     loadImage(path);
+}
+
+void MainWindow::openOptionsDialog()
+{
+    m_optionsDialog->exec();
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event)

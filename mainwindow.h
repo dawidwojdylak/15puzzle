@@ -7,6 +7,8 @@
 #include <QHBoxLayout>
 #include "user.h"
 #include "puzzle.h"
+#include "optionsdialog.h"
+
 
 #define DEFAULT_IMAGE_PATH "./img/sample1.png"
 
@@ -26,6 +28,7 @@ public:
 
 private slots:
     void onActionOpenTriggered();
+    void openOptionsDialog();
 
 protected:
     void keyPressEvent(QKeyEvent *event) override;
@@ -34,5 +37,6 @@ private:
     Ui::MainWindow *ui;
     QPointer<Puzzle> m_puzzle;
     QPixmap m_image;
+    OptionsDialog * m_optionsDialog;
 };
 #endif // MAINWINDOW_H
