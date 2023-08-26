@@ -6,6 +6,7 @@
 #include <QPaintEvent>
 #include <QGridLayout>
 #include <QVector>
+#include <tuple>
 #include <memory>
 #include "piece.h"
 
@@ -28,6 +29,7 @@ public:
     void setup(QPixmap img);
     void clearPuzzle();
     void movePieceByKey(Key k);
+    void undo();
 
 public slots:
     void movePieceById(int id, bool userMove = true);
@@ -45,6 +47,7 @@ protected:
 
 private:
     QVector<Piece*> m_pieces;
+    QVector<std::tuple<int, int>> m_history;
     int m_sideSize;
     int m_imageSize;
     QPixmap m_puzzleImage;

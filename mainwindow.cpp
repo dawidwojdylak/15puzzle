@@ -130,8 +130,8 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
             openOptionsDialog();
             break;
         case Qt::Key_Z:
-            if (event->modifiers() == Qt::ControlModifier) {
-            }
+            if (event->modifiers() == Qt::ControlModifier) 
+                m_puzzle->undo();
             break;
         default:
             QMainWindow::keyPressEvent(event); 

@@ -63,7 +63,17 @@ void Puzzle::movePieceByKey(Key k)
     {
         swapPieces(blankIdx, pieceToBeMovedIdx, true);
     }
+}
 
+void Puzzle::undo()
+{
+    if (m_history.isEmpty()) return;
+    std::tuple<int, int> lastMove = m_history.last();
+    m_history.removeLast();
+
+    swapPieces(std::get<1>(lastMove), std::get<0>(lastMove));
+
+    emit updateSteps(--m_userSteps);
 }
 
 void Puzzle::movePieceById(int id, bool userMove)
@@ -90,7 +100,6 @@ void Puzzle::movePieceById(int id, bool userMove)
     if (userMove)
         checkIfFinished();
 }
-
 
 
 void Puzzle::sliceImage(const QPixmap &image)
@@ -222,9 +231,8 @@ void Puzzle::swapPieces(int blankTileIndex, int movingTileIndex, bool userMove)
             m_pieces[movingTileIndex] = temp;
             if (userMove)
             {
-                m_userSteps++;
-                emit updateSteps(m_userSteps);
-                qDebug() << userMove << " user Move " << m_userSteps;
+                m_history.append(std::make_tuple(blankTileIndex, movingTileIndex));
+                emit updateSteps(++m_userSteps);
             }
         }
     }
