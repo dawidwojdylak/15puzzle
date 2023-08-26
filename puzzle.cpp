@@ -42,16 +42,16 @@ void Puzzle::movePieceByKey(Key k)
     switch (k)
     {
     case KEY_DOWN:
-        swapPieces(blankIdx, blankIdx - m_sideSize);
+        // swapPieces(blankIdx, blankIdx - m_sideSize);
         break;
     case KEY_UP:
-        swapPieces(blankIdx, blankIdx + m_sideSize);
+        // swapPieces(blankIdx, blankIdx + m_sideSize);
         break;
     case KEY_LEFT:
-        swapPieces(blankIdx, blankIdx - 1);
+        // swapPieces(blankIdx, blankIdx - 1);
         break;
     case KEY_RIGHT:
-        swapPieces(blankIdx, blankIdx + 1);
+        // swapPieces(blankIdx, blankIdx + 1);
         break;
     
     default:
@@ -61,7 +61,7 @@ void Puzzle::movePieceByKey(Key k)
 
 }
 
-void Puzzle::movePieceById(int id)
+void Puzzle::movePieceById(int id, bool checkIfFinishedFlag)
 {
     int blankTileIndex = -1;
     int movingTileIndex = -1;
@@ -82,7 +82,9 @@ void Puzzle::movePieceById(int id)
     swapPieces(blankTileIndex, movingTileIndex);
 
     draw();
-    checkIfFinished();
+
+    if (checkIfFinishedFlag)
+        checkIfFinished();
 }
 
 
@@ -155,7 +157,7 @@ void Puzzle::shuffle()
                 // get random tile to swap
                 int possibleIndices[4] = {j+1, j-1, j+m_sideSize, j-m_sideSize};
                 int randomIndex = std::rand() % 4;
-                movePieceById(possibleIndices[randomIndex]);
+                movePieceById(possibleIndices[randomIndex], false);
                 break;
             }
             j++;
@@ -197,6 +199,14 @@ void Puzzle::swapPieces(int blankTileIndex, int movingTileIndex)
     // Check, if selected tiles are neighbors
     if ( (qFabs(blankTileIndex - movingTileIndex) == 1) or (qFabs(blankTileIndex - movingTileIndex) == m_sideSize) )
     {
+        // check if the blank tile is on the border
+        if (
+            ((blankTileIndex % m_sideSize == 0) and (blankTileIndex - movingTileIndex == 1))
+            or 
+            ((blankTileIndex % m_sideSize == m_sideSize - 1) and (blankTileIndex - movingTileIndex == -1))
+        )
+            return;
+
         // Swap the tiles
         if (blankTileIndex != -1 && movingTileIndex != -1)
         {

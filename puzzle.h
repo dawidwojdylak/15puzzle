@@ -30,7 +30,7 @@ public:
     void movePieceByKey(Key k);
 
 public slots:
-    void movePieceById(int id);
+    void movePieceById(int id, bool checkIfFinishedFlag = true);
 
 signals:
 
