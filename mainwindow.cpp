@@ -2,11 +2,15 @@
 #include "ui_mainwindow.h"
 #include <QFileDialog>
 #include <QTimer>
+#include <QFile>
+#include <QTextStream>
+#include <QDateTime>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
-    , m_steps(0), m_seconds(0)
+    , m_steps(0), m_seconds(0),
+    m_imgPath(DEFAULT_IMAGE_PATH)
 {
     ui->setupUi(this);
     setWindowTitle("15puzzle");
@@ -25,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent)
     resize(400, 400);
     setCentralWidget(frame);
 
-    loadImage(DEFAULT_IMAGE_PATH);
+    loadImage();
     m_gameTimer->start();
 
     /* connects */
@@ -36,6 +40,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_gameTimer, &GameTimer::timeUpdated, this, &MainWindow::updateStatusBar);
     connect(m_pauseMessageBox, &QMessageBox::accepted, this, &MainWindow::toggleTimer);
     connect(m_puzzle, &Puzzle::updateSteps, this, &MainWindow::updateStatusBarWithSteps);
+    connect(m_optionsDialog, &OptionsDialog::saveGameState, this, &MainWindow::SaveUserGame);
 }
 
 MainWindow::~MainWindow()
@@ -43,10 +48,10 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::loadImage(const QString & imgPath)
+void MainWindow::loadImage()
 {
     QPixmap img;
-    img.load(imgPath);
+    img.load(m_imgPath);
     
     // crop the image to square
     int sideLength = qMin(img.width(), img.height());
@@ -60,11 +65,49 @@ void MainWindow::loadImage(const QString & imgPath)
     m_puzzle->setup(m_image);
 }
 
+void MainWindow::OpenUserGame()
+{
+ 
+}
+
+void MainWindow::SaveUserGame()
+{
+    QString fileName = m_optionsDialog->getPlayerName() + ".csv";
+    fileName.replace(' ', '_');
+
+    
+    // Get current date and time
+    QDateTime dateTime = QDateTime::currentDateTime();
+    QString formattedDateTime = dateTime.toString("dd-MM-yyyy hh:mm:ss");
+
+    QFile file(fileName);
+
+    if (file.open(QIODevice::Append | QIODevice::Text)) {
+        QTextStream stream(&file);
+
+        // Write data to CSV format
+        stream << m_optionsDialog->getPlayerName() << ","
+               << formattedDateTime << ","
+               << m_imgPath << ","
+               << m_gameTimer->elapsedSeconds() << ","
+               << m_puzzle->getUserSteps() << ",";
+
+        for (const auto& move : m_puzzle->getHistory()) {
+            stream << std::get<0>(move) << ":" << std::get<1>(move) << ",";
+        }
+
+        stream << "\n";
+
+        file.close();
+    }  
+}
+
+
 void MainWindow::onActionOpenTriggered()
 {
     QString filter = "Images (*.png *.jpg *.jpeg *.bmp *.gif)";
-    QString path = QFileDialog::getOpenFileName(this, "Open Image", "", filter);
-    loadImage(path);
+    m_imgPath = QFileDialog::getOpenFileName(this, "Open Image", "", filter);
+    loadImage();
 }
 
 void MainWindow::openOptionsDialog()

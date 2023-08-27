@@ -26,7 +26,11 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    void loadImage(const QString & imgPath);
+    void loadImage();
+
+public slots:
+    void OpenUserGame();
+    void SaveUserGame();
 
 private slots:
     void onActionOpenTriggered();
@@ -60,6 +64,7 @@ private:
     PauseMessageBox * m_pauseMessageBox;
     int m_steps;
     int m_seconds;
+    QString m_imgPath;
 
 };
 #endif // MAINWINDOW_H

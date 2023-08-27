@@ -30,6 +30,8 @@ public:
     void clearPuzzle();
     void movePieceByKey(Key k);
     void undo();
+    inline unsigned getUserSteps() const { return m_userSteps; }
+    inline QVector<std::tuple<int, int>> getHistory() const { return m_history; }
 
 public slots:
     void movePieceById(int id, bool userMove = true);
