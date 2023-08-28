@@ -41,6 +41,7 @@ private slots:
     void updateStatusBar(int seconds);
     void updateStatusBarWithSteps(int steps);
     void puzzleFinished();
+    void restartGame();
 
 protected:
     void keyPressEvent(QKeyEvent *event) override;

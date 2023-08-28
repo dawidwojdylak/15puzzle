@@ -36,6 +36,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionOpen, &QAction::triggered, this, &MainWindow::onActionOpenTriggered);
     connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::toggleTimer);
     connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::openOptionsDialog);
+    connect(ui->actionRestart, &QAction::triggered, this, &MainWindow::restartGame);
     connect(m_optionsDialog, &QDialog::finished, this, &MainWindow::toggleTimer);
     connect(m_optionsDialog, &OptionsDialog::saveGameState, this, &MainWindow::SaveUserGame);
     connect(m_optionsDialog, &OptionsDialog::loadGameState, this, &MainWindow::OpenUserGame);
@@ -43,6 +44,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_pauseMessageBox, &QMessageBox::accepted, this, &MainWindow::toggleTimer);
     connect(m_puzzle, &Puzzle::updateSteps, this, &MainWindow::updateStatusBarWithSteps);
     connect(m_puzzle, &Puzzle::puzzleFinished, this, &MainWindow::puzzleFinished);
+
 }
 
 MainWindow::~MainWindow()
@@ -195,7 +197,7 @@ void MainWindow::updateStatusBar(int seconds)
 
 void MainWindow::updateStatusBarWithSteps(int steps)
 {
-    m_steps = steps;
+    m_steps = m_puzzle->getUserSteps();
     m_timerLabel->setText("Steps: " + QString::number(m_steps) 
         + "; Elapsed time: " + QString::number(m_seconds) + " seconds");
 }
@@ -205,6 +207,14 @@ void MainWindow::puzzleFinished()
     QMessageBox msgBox;
     msgBox.setText("Congratulations, " + m_optionsDialog->getPlayerName() + "!");
     msgBox.exec();
+}
+
+void MainWindow::restartGame()
+{
+    m_puzzle->clearPuzzle();
+    resetTimer();
+    updateStatusBarWithSteps(0);
+    loadImage();
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
