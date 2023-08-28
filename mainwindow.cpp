@@ -206,9 +206,14 @@ void MainWindow::updateStatusBarWithSteps(int steps)
 
 void MainWindow::puzzleFinished()
 {
+    double score = 0;
+    score = (m_puzzle->getSideSize() * m_puzzle->getSideSize() - 1) * 1000 - (m_seconds + m_steps * 10);
+
     QMessageBox msgBox;
-    msgBox.setText("Congratulations, " + m_optionsDialog->getPlayerName() + "!");
+    msgBox.setText("Congratulations, " + m_optionsDialog->getPlayerName() + "!\nYour score is: " + QString::number(score));
     msgBox.exec();
+
+    restartGame();
 }
 
 void MainWindow::restartGame()

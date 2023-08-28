@@ -38,6 +38,7 @@ public:
     inline void setUserSteps(int steps) { m_userSteps = steps; }
     inline void setShuffleSteps(int steps) { m_shuffleSteps = steps; }
     inline void setSideSize(int size) { m_sideSize = size; }
+    inline int getSideSize() const { return m_sideSize; }
 
 public slots:
     void movePieceById(int id, bool userMove = true);
