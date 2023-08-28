@@ -42,6 +42,7 @@ private slots:
     void updateStatusBarWithSteps(int steps);
     void puzzleFinished();
     void restartGame();
+    void changeGridSize(int size);
 
 protected:
     void keyPressEvent(QKeyEvent *event) override;

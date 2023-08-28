@@ -23,6 +23,7 @@ public:
 signals:
     void saveGameState();
     void loadGameState();
+    void changeGridSize(int size);
 
 private slots:
 

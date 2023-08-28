@@ -40,10 +40,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_optionsDialog, &QDialog::finished, this, &MainWindow::toggleTimer);
     connect(m_optionsDialog, &OptionsDialog::saveGameState, this, &MainWindow::SaveUserGame);
     connect(m_optionsDialog, &OptionsDialog::loadGameState, this, &MainWindow::OpenUserGame);
+    connect(m_optionsDialog, &OptionsDialog::changeGridSize, this, &MainWindow::changeGridSize);
     connect(m_gameTimer, &GameTimer::timeUpdated, this, &MainWindow::updateStatusBar);
     connect(m_pauseMessageBox, &QMessageBox::accepted, this, &MainWindow::toggleTimer);
     connect(m_puzzle, &Puzzle::updateSteps, this, &MainWindow::updateStatusBarWithSteps);
     connect(m_puzzle, &Puzzle::puzzleFinished, this, &MainWindow::puzzleFinished);
+
 
 }
 
@@ -215,6 +217,15 @@ void MainWindow::restartGame()
     resetTimer();
     updateStatusBarWithSteps(0);
     loadImage();
+}
+
+void MainWindow::changeGridSize(int size)
+{
+    m_puzzle->clearPuzzle();
+    m_puzzle->setSideSize(size);
+    m_gameTimer->reset();
+    m_puzzle->setup(m_image);
+    
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event)

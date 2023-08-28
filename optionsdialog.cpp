@@ -13,6 +13,7 @@ OptionsDialog::OptionsDialog(QWidget *parent) : QDialog(parent) {
     for (int size = 2; size <= 20; ++size) {
         m_gridSizeComboBox->addItem(QString::number(size));
     }
+    m_gridSizeComboBox->setCurrentIndex(1);
 
     m_saveGameStateButton = new QPushButton("Save Game State"); 
     connect(m_saveGameStateButton, &QPushButton::clicked, this, &OptionsDialog::saveGameStateClicked);
@@ -61,7 +62,7 @@ void OptionsDialog::loadGameStateClicked()
 
 void OptionsDialog::gridSizeChanged(int index) 
 {
-    qDebug() << "gridSizeChanged";
     int selectedSize = m_gridSizeComboBox->itemText(index).toInt();
+    emit changeGridSize(selectedSize);
 }
 

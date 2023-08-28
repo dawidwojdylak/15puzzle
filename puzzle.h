@@ -37,6 +37,7 @@ public:
     void setHistory(QVector<std::tuple<int, int>> historyVec);
     inline void setUserSteps(int steps) { m_userSteps = steps; }
     inline void setShuffleSteps(int steps) { m_shuffleSteps = steps; }
+    inline void setSideSize(int size) { m_sideSize = size; }
 
 public slots:
     void movePieceById(int id, bool userMove = true);
