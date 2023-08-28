@@ -18,10 +18,11 @@ public:
     OptionsDialog(QWidget *parent = nullptr);
 
     inline QString getPlayerName() const { return m_playerNameLineEdit->text(); }
-
+    inline void setPlayerName(QString name) { m_playerNameLineEdit->setText(name); }
 
 signals:
     void saveGameState();
+    void loadGameState();
 
 private slots:
 

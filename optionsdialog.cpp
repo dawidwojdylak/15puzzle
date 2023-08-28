@@ -55,7 +55,7 @@ void OptionsDialog::saveGameStateClicked()
 
 void OptionsDialog::loadGameStateClicked() 
 {
-    qDebug() << "loadGameStateClicked";
+    emit loadGameState();
 }
 
 

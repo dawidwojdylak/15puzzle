@@ -6,7 +6,7 @@
 
 
 Puzzle::Puzzle(int sideSize, int imageSize, QWidget *parent)
-    : QWidget{parent}, m_sideSize(sideSize), m_imageSize(imageSize), m_userSteps(0)
+    : QWidget{parent}, m_sideSize(sideSize), m_imageSize(imageSize), m_userSteps(0), m_shuffleSteps(SHUFFLE_STEPS)
 {
     setMinimumSize(m_imageSize, m_imageSize);
     setMaximumSize(m_imageSize, m_imageSize);
@@ -23,7 +23,7 @@ void Puzzle::setup(QPixmap img)
 
     sliceImage(img);
     setFirstBlank();
-    shuffle();
+        shuffle();
     draw();
 }
 
@@ -62,6 +62,7 @@ void Puzzle::movePieceByKey(Key k)
     if (blankIdx <= m_pieces.size() and pieceToBeMovedIdx <= m_pieces.size() and blankIdx >= 0 and pieceToBeMovedIdx >= 0) 
     {
         swapPieces(blankIdx, pieceToBeMovedIdx, true);
+        checkIfFinished();
     }
 }
 
@@ -74,6 +75,22 @@ void Puzzle::undo()
     swapPieces(std::get<1>(lastMove), std::get<0>(lastMove));
 
     emit updateSteps(--m_userSteps);
+}
+
+void Puzzle::replaySteps()
+{
+    for (auto step : m_history)
+    {
+        qDebug() << std::get<0>(step) << " ha : " << std::get<1>(step); 
+        swapPieces(std::get<0>(step), std::get<1>(step));
+    }
+}
+
+void Puzzle::setHistory(QVector<std::tuple<int, int>> historyVec)
+{
+    m_history.clear();
+    for (auto i : historyVec)
+        m_history.append(std::make_tuple(std::get<1>(i), std::get<0>(i)));
 }
 
 void Puzzle::movePieceById(int id, bool userMove)
@@ -155,11 +172,12 @@ void Puzzle::clearPuzzle()
         delete oldPieceItem;
     }
     m_pieces.clear();
+    m_userSteps = 0;
 }
 
 void Puzzle::shuffle()
 {
-    for (int i = 0; i < SHUFFLE_STEPS; ++i)
+    for (int i = 0; i < m_shuffleSteps; ++i)
     {
         int j = 0;
         for (const Piece * piece : m_pieces)
@@ -200,11 +218,7 @@ void Puzzle::checkIfFinished() const
     }
 
     if (finished)
-    {
-        QMessageBox msgBox;
-        msgBox.setText("Congratulations!");
-        msgBox.exec();
-    }
+        emit puzzleFinished();
 }
 
 void Puzzle::swapPieces(int blankTileIndex, int movingTileIndex, bool userMove)

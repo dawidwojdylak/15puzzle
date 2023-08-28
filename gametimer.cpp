@@ -1,6 +1,6 @@
 #include "gametimer.h"
 
-GameTimer::GameTimer(QObject *parent) : QObject(parent), elapsedSecondsCount(0) 
+GameTimer::GameTimer(QObject *parent) : QObject(parent), m_elapsedSecondsCount(0) 
 {
     m_timer = new QTimer(this);
     connect(m_timer, &QTimer::timeout, this, &GameTimer::updateTimer);
@@ -18,13 +18,18 @@ void GameTimer::pause()
 
 void GameTimer::reset() 
 {
-    elapsedSecondsCount = 0;
-    emit timeUpdated(elapsedSecondsCount);
+    m_elapsedSecondsCount = 0;
+    emit timeUpdated(m_elapsedSecondsCount);
 }
 
 int GameTimer::elapsedSeconds() const
 {
-    return elapsedSecondsCount;
+    return m_elapsedSecondsCount;
+}
+
+void GameTimer::setElapsedSeconds(int seconds)
+{
+    m_elapsedSecondsCount = seconds;
 }
 
 bool GameTimer::isActive() const
@@ -34,6 +39,5 @@ bool GameTimer::isActive() const
 
 void GameTimer::updateTimer() 
 {
-    elapsedSecondsCount++;
-    emit timeUpdated(elapsedSecondsCount);
+    emit timeUpdated(++m_elapsedSecondsCount);
 }

@@ -14,6 +14,7 @@ public:
     void pause();
     void reset();   
     int elapsedSeconds() const;
+    void setElapsedSeconds(int seconds);
     bool isActive() const;
 
 signals:
@@ -25,7 +26,7 @@ private slots:
 
 private:
     QTimer *m_timer;
-    int elapsedSecondsCount;
+    int m_elapsedSecondsCount;
 };
 
 #endif // GAMETIMER_H

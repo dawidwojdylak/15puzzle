@@ -13,6 +13,7 @@
 #include "gametimer.h"
 
 #define DEFAULT_IMAGE_PATH "./img/sample1.png"
+#define RANKING_FILE_NAME "ranking.csv"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -39,6 +40,7 @@ private slots:
     void resetTimer();
     void updateStatusBar(int seconds);
     void updateStatusBarWithSteps(int steps);
+    void puzzleFinished();
 
 protected:
     void keyPressEvent(QKeyEvent *event) override;

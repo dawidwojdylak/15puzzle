@@ -10,7 +10,7 @@
 #include <memory>
 #include "piece.h"
 
-#define SHUFFLE_STEPS 30
+#define SHUFFLE_STEPS 1
 
 
 class Puzzle : public QWidget
@@ -30,14 +30,20 @@ public:
     void clearPuzzle();
     void movePieceByKey(Key k);
     void undo();
+    void replaySteps();
+
     inline unsigned getUserSteps() const { return m_userSteps; }
     inline QVector<std::tuple<int, int>> getHistory() const { return m_history; }
+    void setHistory(QVector<std::tuple<int, int>> historyVec);
+    inline void setUserSteps(int steps) { m_userSteps = steps; }
+    inline void setShuffleSteps(int steps) { m_shuffleSteps = steps; }
 
 public slots:
     void movePieceById(int id, bool userMove = true);
 
 signals:
     void updateSteps(int step);
+    void puzzleFinished() const;
 
 protected:
     void sliceImage(const QPixmap& image);
@@ -55,6 +61,7 @@ private:
     QPixmap m_puzzleImage;
     QGridLayout *m_gridLayout;
     unsigned int m_userSteps;
+    int m_shuffleSteps;
 };
 
 #endif // PUZZLE_H

@@ -37,10 +37,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::toggleTimer);
     connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::openOptionsDialog);
     connect(m_optionsDialog, &QDialog::finished, this, &MainWindow::toggleTimer);
+    connect(m_optionsDialog, &OptionsDialog::saveGameState, this, &MainWindow::SaveUserGame);
+    connect(m_optionsDialog, &OptionsDialog::loadGameState, this, &MainWindow::OpenUserGame);
     connect(m_gameTimer, &GameTimer::timeUpdated, this, &MainWindow::updateStatusBar);
     connect(m_pauseMessageBox, &QMessageBox::accepted, this, &MainWindow::toggleTimer);
     connect(m_puzzle, &Puzzle::updateSteps, this, &MainWindow::updateStatusBarWithSteps);
-    connect(m_optionsDialog, &OptionsDialog::saveGameState, this, &MainWindow::SaveUserGame);
+    connect(m_puzzle, &Puzzle::puzzleFinished, this, &MainWindow::puzzleFinished);
 }
 
 MainWindow::~MainWindow()
@@ -62,12 +64,63 @@ void MainWindow::loadImage()
 
     m_image = imgSqr;
     m_puzzle->clearPuzzle();
+    m_gameTimer->reset();
     m_puzzle->setup(m_image);
 }
 
 void MainWindow::OpenUserGame()
 {
- 
+    QString filter = "(*.csv)";
+    QString path = QFileDialog::getOpenFileName(this, "Open saved game", "", filter);
+    QFile file(path);
+
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) 
+    {
+        QTextStream stream(&file);
+        QString line;
+        while (!stream.atEnd()) 
+        {
+            line = stream.readLine();
+        }
+        
+        QStringList fields = line.split(',');
+
+        if (fields.size() >= 6) 
+        {
+            QVector<std::tuple<int, int>> history;
+
+            QString playerName = fields[0];
+            QString dateTime = fields[1];
+            m_imgPath = fields[2];
+            int elapsedSeconds = fields[3].toInt();
+            int userSteps = fields[4].toInt();
+            for (int i = 5; i < fields.size(); i++)
+            {
+                QStringList historyItem = fields[i].split(':');
+                if (historyItem.size() == 2) 
+                {
+                    int first = historyItem[0].toInt();
+                    int second = historyItem[1].toInt();
+                    qDebug() << first << ", , " << second;
+                    history.append(std::make_tuple(first, second));
+                }
+            }
+
+            m_optionsDialog->setPlayerName(playerName);
+            m_gameTimer->setElapsedSeconds(elapsedSeconds);
+            m_puzzle->setUserSteps(userSteps);
+            updateStatusBarWithSteps(userSteps);
+            m_puzzle->setHistory(history);
+
+            m_puzzle->setShuffleSteps(0u);
+            loadImage();
+            m_puzzle->setShuffleSteps(SHUFFLE_STEPS);
+            m_puzzle->replaySteps();
+
+        }
+
+        file.close();
+    }
 }
 
 void MainWindow::SaveUserGame()
@@ -99,13 +152,17 @@ void MainWindow::SaveUserGame()
         stream << "\n";
 
         file.close();
+
+        QMessageBox msgBox;
+        msgBox.setText("Game saved as " + m_optionsDialog->getPlayerName() + ".csv");
+        msgBox.exec();
     }  
 }
 
 
 void MainWindow::onActionOpenTriggered()
 {
-    QString filter = "Images (*.png *.jpg *.jpeg *.bmp *.gif)";
+    QString filter = "Images (*.png *.jpg *.jpeg)";
     m_imgPath = QFileDialog::getOpenFileName(this, "Open Image", "", filter);
     loadImage();
 }
@@ -117,7 +174,6 @@ void MainWindow::openOptionsDialog()
 
 void MainWindow::toggleTimer() 
 {
-    qDebug() << "toggle " << m_gameTimer->isActive();
     if (m_gameTimer->isActive()) {
         m_gameTimer->pause();
     } else {
@@ -144,13 +200,23 @@ void MainWindow::updateStatusBarWithSteps(int steps)
         + "; Elapsed time: " + QString::number(m_seconds) + " seconds");
 }
 
+void MainWindow::puzzleFinished()
+{
+    QMessageBox msgBox;
+    msgBox.setText("Congratulations, " + m_optionsDialog->getPlayerName() + "!");
+    msgBox.exec();
+}
+
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) 
     {
         case Qt::Key_S:
         case Qt::Key_Down:
-            m_puzzle->movePieceByKey(Puzzle::KEY_DOWN);
+            if (event->modifiers() == Qt::ControlModifier) 
+                SaveUserGame();
+            else
+                m_puzzle->movePieceByKey(Puzzle::KEY_DOWN);
             break;
         case Qt::Key_W:
         case Qt::Key_Up:
