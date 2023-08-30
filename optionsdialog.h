@@ -10,6 +10,8 @@
 #include <QLineEdit>
 #include <QTextEdit>
 
+#define RANKING_FILE_NAME "ranking.csv"
+
 
 class OptionsDialog : public QDialog
 {
@@ -19,6 +21,7 @@ public:
 
     inline QString getPlayerName() const { return m_playerNameLineEdit->text(); }
     inline void setPlayerName(QString name) { m_playerNameLineEdit->setText(name); }
+    void fillRanking();
 
 signals:
     void saveGameState();
@@ -41,6 +44,7 @@ private:
     QPushButton *m_loadGameStateButton;
     QComboBox *m_gridSizeComboBox;
     QCheckBox *m_numbersCheckBox;
+    QTextEdit *m_rankingTextEdit;
 };
 
 #endif // OPTIONSDIALOG_H

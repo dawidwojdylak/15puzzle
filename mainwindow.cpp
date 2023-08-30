@@ -47,6 +47,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_pauseMessageBox, &QMessageBox::accepted, this, &MainWindow::toggleTimer);
     connect(m_puzzle, &Puzzle::updateSteps, this, &MainWindow::updateStatusBarWithSteps);
     connect(m_puzzle, &Puzzle::puzzleFinished, this, &MainWindow::puzzleFinished);
+
+    m_optionsDialog->fillRanking();
 }
 
 MainWindow::~MainWindow()
@@ -206,13 +208,53 @@ void MainWindow::updateStatusBarWithSteps(int steps)
 
 void MainWindow::puzzleFinished()
 {
-    double score = 0;
+    int score = 0;
     score = (m_puzzle->getSideSize() * m_puzzle->getSideSize() - 1) * 1000 - (m_seconds + m_steps * 10);
 
     QMessageBox msgBox;
     msgBox.setText("Congratulations, " + m_optionsDialog->getPlayerName() + "!\nYour score is: " + QString::number(score));
     msgBox.exec();
 
+    QString fileName = RANKING_FILE_NAME;
+
+    QDateTime dateTime = QDateTime::currentDateTime();
+    QString formattedDateTime = dateTime.toString("dd-MM-yyyy hh:mm:ss");
+
+    QFile file(fileName);
+
+    QVector<QStringList> dataRows;
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QTextStream in(&file);
+        while (!in.atEnd()) {
+            QString line = in.readLine();
+            QStringList row = line.split(",");
+            dataRows.push_back(row);
+        }
+        file.close();
+    }
+
+    QStringList newRow;
+    newRow << QString::number(score) << m_optionsDialog->getPlayerName() << formattedDateTime;
+        
+
+    dataRows.push_back(newRow);
+
+    std::sort(dataRows.begin(), dataRows.end(), [](const QStringList &a, const QStringList &b) {
+        int scoreA = a.at(0).toInt();
+        int scoreB = b.at(0).toInt();
+        return scoreA > scoreB;
+    });
+
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&file);
+        for (const auto &row : dataRows) {
+            out << row.join(",") << "\n";
+        }
+        file.close();
+
+    }
+
+    m_optionsDialog->fillRanking();
     restartGame();
 }
 
@@ -222,6 +264,7 @@ void MainWindow::restartGame()
     resetTimer();
     updateStatusBarWithSteps(0);
     loadImage();
+
 }
 
 void MainWindow::changeGridSize(int size)

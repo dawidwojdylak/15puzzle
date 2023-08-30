@@ -1,5 +1,6 @@
 #include "optionsdialog.h"
-
+#include <QFile>
+#include <QTextStream>
 
 OptionsDialog::OptionsDialog(QWidget *parent) : QDialog(parent) {
     setWindowTitle("15puzzle options");
@@ -29,7 +30,7 @@ OptionsDialog::OptionsDialog(QWidget *parent) : QDialog(parent) {
     connect(loadImageBtn, &QPushButton::clicked, this, &OptionsDialog::loadImageClicked);
 
     QLabel *rankingLabel = new QLabel("Ranking:");
-    QTextEdit *rankingTextEdit = new QTextEdit();
+    m_rankingTextEdit= new QTextEdit();
 
 
     connect(m_gridSizeComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &OptionsDialog::gridSizeChanged);
@@ -44,9 +45,32 @@ OptionsDialog::OptionsDialog(QWidget *parent) : QDialog(parent) {
     layout->addWidget(m_loadGameStateButton);
     layout->addWidget(loadImageBtn);
     layout->addWidget(rankingLabel);
-    layout->addWidget(rankingTextEdit);
+    layout->addWidget(m_rankingTextEdit);
 
     setLayout(layout);
+}
+
+void OptionsDialog::fillRanking()
+{
+    QFile file(RANKING_FILE_NAME);
+
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) 
+    {
+        m_rankingTextEdit->clear();
+
+        QTextStream in(&file);
+
+        QString rankingText;
+        while (!in.atEnd()) 
+        {
+            QString line = in.readLine();
+            rankingText.append(line + "\n");
+        }
+        file.close();
+
+        rankingText.replace(',', " ");
+        m_rankingTextEdit->setPlainText(rankingText);
+    } 
 }
 
 void OptionsDialog::playerNameChanged(const QString &text) 
