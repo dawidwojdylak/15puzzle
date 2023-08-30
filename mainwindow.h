@@ -43,7 +43,7 @@ private slots:
     void puzzleFinished();
     void restartGame();
     void changeGridSize(int size);
-
+   
 protected:
     void keyPressEvent(QKeyEvent *event) override;
 

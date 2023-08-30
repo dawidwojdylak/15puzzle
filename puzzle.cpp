@@ -6,7 +6,8 @@
 
 
 Puzzle::Puzzle(int sideSize, int imageSize, QWidget *parent)
-    : QWidget{parent}, m_sideSize(sideSize), m_imageSize(imageSize), m_userSteps(0), m_shuffleSteps(SHUFFLE_STEPS)
+    : QWidget{parent}, m_sideSize(sideSize), m_imageSize(imageSize),
+    m_userSteps(0), m_shuffleSteps(SHUFFLE_STEPS), m_tileText(true)
 {
     setMinimumSize(m_imageSize, m_imageSize);
     setMaximumSize(m_imageSize, m_imageSize);
@@ -20,11 +21,17 @@ void Puzzle::setup(QPixmap img)
     if (img.isNull())
         return;
 
+    m_image = img;
 
     sliceImage(img);
     setFirstBlank();
         shuffle();
     draw();
+}
+
+void Puzzle::setup()
+{
+    setup(m_image);
 }
 
 void Puzzle::movePieceByKey(Key k)
@@ -81,7 +88,6 @@ void Puzzle::replaySteps()
 {
     for (auto step : m_history)
     {
-        qDebug() << std::get<0>(step) << " ha : " << std::get<1>(step); 
         swapPieces(std::get<0>(step), std::get<1>(step));
     }
 }
@@ -118,6 +124,13 @@ void Puzzle::movePieceById(int id, bool userMove)
         checkIfFinished();
 }
 
+void Puzzle::onNumbersCheckBoxChecked(bool checked)
+{
+    m_tileText = checked;
+    clearPuzzle();
+    setup();
+}
+
 
 void Puzzle::sliceImage(const QPixmap &image)
 {
@@ -136,10 +149,16 @@ void Puzzle::sliceImage(const QPixmap &image)
             int y = i * sliceHeight;
             QPixmap slice = image.copy(x, y, sliceSize, sliceSize);
 
-            /* debug */
-            QPainter tempPainter(&slice);
-            tempPainter.setFont( QFont("Arial") );
-            tempPainter.drawText(QPoint(100, 100), QString::number(id));
+            if (m_tileText)
+            {
+                QPainter tempPainter(&slice);
+                QRect textRect = tempPainter.boundingRect(slice.rect(), Qt::AlignCenter, QString::number(id + 1));
+                QFont font("Arial");
+                font.setPointSize(14);
+                tempPainter.setFont(font);
+                tempPainter.setPen(Qt::red);
+                tempPainter.drawText(textRect, QString::number(id + 1));
+            }
 
             Piece * piece = new Piece(id++, slice);
             connect(piece, &Piece::moveSelf, this, &Puzzle::movePieceById);

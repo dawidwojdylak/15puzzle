@@ -15,6 +15,10 @@ OptionsDialog::OptionsDialog(QWidget *parent) : QDialog(parent) {
     }
     m_gridSizeComboBox->setCurrentIndex(1);
 
+    m_numbersCheckBox = new QCheckBox("Display the numbers of the tiles");
+    m_numbersCheckBox->setChecked(true);
+    connect(m_numbersCheckBox, &QCheckBox::stateChanged, this, &OptionsDialog::numbersCheckBoxChecked);
+
     m_saveGameStateButton = new QPushButton("Save Game State"); 
     connect(m_saveGameStateButton, &QPushButton::clicked, this, &OptionsDialog::saveGameStateClicked);
 
@@ -35,6 +39,7 @@ OptionsDialog::OptionsDialog(QWidget *parent) : QDialog(parent) {
     layout->addWidget(m_playerNameLineEdit);
     layout->addWidget(gridSizeLabel);
     layout->addWidget(m_gridSizeComboBox);
+    layout->addWidget(m_numbersCheckBox);
     layout->addWidget(m_saveGameStateButton);
     layout->addWidget(m_loadGameStateButton);
     layout->addWidget(loadImageBtn);
@@ -46,7 +51,7 @@ OptionsDialog::OptionsDialog(QWidget *parent) : QDialog(parent) {
 
 void OptionsDialog::playerNameChanged(const QString &text) 
 {
-    qDebug() << "playerNameChanged";
+//    qDebug() << "playerNameChanged";
 }
 
 void OptionsDialog::saveGameStateClicked() 

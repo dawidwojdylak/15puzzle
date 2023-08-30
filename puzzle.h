@@ -27,6 +27,7 @@ public:
     explicit Puzzle(int sideSize = 3, int imageSize = 400, QWidget *parent = nullptr);
 
     void setup(QPixmap img);
+    void setup();
     void clearPuzzle();
     void movePieceByKey(Key k);
     void undo();
@@ -42,6 +43,7 @@ public:
 
 public slots:
     void movePieceById(int id, bool userMove = true);
+    void onNumbersCheckBoxChecked(bool checked);    
 
 signals:
     void updateSteps(int step);
@@ -64,6 +66,8 @@ private:
     QGridLayout *m_gridLayout;
     unsigned int m_userSteps;
     int m_shuffleSteps;
+    QPixmap m_image;
+    bool m_tileText;
 };
 
 #endif // PUZZLE_H

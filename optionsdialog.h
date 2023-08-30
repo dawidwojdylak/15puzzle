@@ -24,6 +24,7 @@ signals:
     void saveGameState();
     void loadGameState();
     void changeGridSize(int size);
+    void numbersCheckBoxChecked(bool checked);
 
 private slots:
 
@@ -37,6 +38,7 @@ private:
     QPushButton *m_saveGameStateButton;
     QPushButton *m_loadGameStateButton;
     QComboBox *m_gridSizeComboBox;
+    QCheckBox *m_numbersCheckBox;
 };
 
 #endif // OPTIONSDIALOG_H
