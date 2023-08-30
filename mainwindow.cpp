@@ -42,6 +42,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_optionsDialog, &OptionsDialog::loadGameState, this, &MainWindow::OpenUserGame);
     connect(m_optionsDialog, &OptionsDialog::changeGridSize, this, &MainWindow::changeGridSize);
     connect(m_optionsDialog, &OptionsDialog::numbersCheckBoxChecked, m_puzzle, &Puzzle::onNumbersCheckBoxChecked);
+    connect(m_optionsDialog, &OptionsDialog::loadImageClicked, this, &MainWindow::onActionOpenTriggered);
     connect(m_gameTimer, &GameTimer::timeUpdated, this, &MainWindow::updateStatusBar);
     connect(m_pauseMessageBox, &QMessageBox::accepted, this, &MainWindow::toggleTimer);
     connect(m_puzzle, &Puzzle::updateSteps, this, &MainWindow::updateStatusBarWithSteps);

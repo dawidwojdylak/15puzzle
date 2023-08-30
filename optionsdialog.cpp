@@ -26,7 +26,7 @@ OptionsDialog::OptionsDialog(QWidget *parent) : QDialog(parent) {
     connect(m_loadGameStateButton, &QPushButton::clicked, this, &OptionsDialog::loadGameStateClicked);
 
     QPushButton *loadImageBtn = new QPushButton("Load Image");
-    // connect(loadImageBtn, &QPushButton::clicked, this, &OptionsDialog::loadImageClicked);
+    connect(loadImageBtn, &QPushButton::clicked, this, &OptionsDialog::loadImageClicked);
 
     QLabel *rankingLabel = new QLabel("Ranking:");
     QTextEdit *rankingTextEdit = new QTextEdit();
@@ -71,3 +71,7 @@ void OptionsDialog::gridSizeChanged(int index)
     emit changeGridSize(selectedSize);
 }
 
+void OptionsDialog::onLoadImageClicked()
+{
+    emit loadImageClicked();
+}

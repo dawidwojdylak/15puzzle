@@ -25,13 +25,15 @@ signals:
     void loadGameState();
     void changeGridSize(int size);
     void numbersCheckBoxChecked(bool checked);
+    void loadImageClicked();
 
 private slots:
-
     void playerNameChanged(const QString &text); 
     void saveGameStateClicked(); 
     void loadGameStateClicked(); 
     void gridSizeChanged(int index); 
+    void onLoadImageClicked();
+
 
 private:
     QLineEdit *m_playerNameLineEdit;
