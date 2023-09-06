@@ -3,7 +3,7 @@
 #include <QMessageBox>
 #include <cstdlib>
 #include <ctime>
-
+#include <QDebug>
 
 Puzzle::Puzzle(int sideSize, int imageSize, QWidget *parent)
     : QWidget{parent}, m_sideSize(sideSize), m_imageSize(imageSize),
@@ -90,6 +90,45 @@ void Puzzle::replaySteps()
     {
         swapPieces(std::get<0>(step), std::get<1>(step));
     }
+}
+
+void Puzzle::restoreTilesPositions(const QVector<std::tuple<int, int>> &positions)
+{
+    QVector<Piece*> temp = m_pieces;
+ 
+    for (const auto &pos : positions)
+    {
+        // qDebug() << "restore: " << std::get<0>(pos) << " : " << std::get<1>(pos);
+        int index = std::get<0>(pos);
+        int id = std::get<1>(pos);
+
+
+        for (int i = 0; i < temp.size(); i++)
+        {
+            if (temp[i]->getId() == id)
+            {
+                QPixmap img = temp[i]->getImage();
+                if (id == 0)
+                    img.fill(Qt::transparent);
+                Piece * piece = new Piece(id, img);
+                connect(piece, &Piece::moveSelf, this, &Puzzle::movePieceById);
+                if (index >= m_pieces.size())
+                    m_pieces.resize(index + 1);
+                
+                m_pieces[index] = piece;
+                break;
+            }
+        }
+    }
+
+
+    QLayoutItem *oldPieceItem;
+    while ((oldPieceItem = m_gridLayout->takeAt(0)) != nullptr)
+    {
+        delete oldPieceItem->widget();
+        delete oldPieceItem;
+    }
+    draw();
 }
 
 void Puzzle::setHistory(QVector<std::tuple<int, int>> historyVec)
@@ -185,9 +224,9 @@ void Puzzle::draw()
 void Puzzle::clearPuzzle()
 {
     QLayoutItem *oldPieceItem;
-    while ((oldPieceItem = m_gridLayout->takeAt(0)) != nullptr) 
+    while ((oldPieceItem = m_gridLayout->takeAt(0)) != nullptr)
     {
-        delete oldPieceItem->widget(); 
+        delete oldPieceItem->widget();
         delete oldPieceItem;
     }
     m_pieces.clear();

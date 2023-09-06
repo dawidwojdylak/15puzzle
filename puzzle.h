@@ -32,9 +32,11 @@ public:
     void movePieceByKey(Key k);
     void undo();
     void replaySteps();
+    void restoreTilesPositions(const QVector<std::tuple<int, int>> &positions);
 
     inline unsigned getUserSteps() const { return m_userSteps; }
     inline QVector<std::tuple<int, int>> getHistory() const { return m_history; }
+    inline QVector<Piece*> getPieces() const { return m_pieces; }
     void setHistory(QVector<std::tuple<int, int>> historyVec);
     inline void setUserSteps(int steps) { m_userSteps = steps; }
     inline void setShuffleSteps(int steps) { m_shuffleSteps = steps; }

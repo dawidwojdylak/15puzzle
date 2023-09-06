@@ -94,21 +94,36 @@ void MainWindow::OpenUserGame()
         if (fields.size() >= 6) 
         {
             QVector<std::tuple<int, int>> history;
+            QVector<std::tuple<int, int>> positions;
 
             QString playerName = fields[0];
             QString dateTime = fields[1];
             m_imgPath = fields[2];
             int elapsedSeconds = fields[3].toInt();
             int userSteps = fields[4].toInt();
-            for (int i = 5; i < fields.size(); i++)
+            int i = 5; 
+            for (i; i < fields.size(); i++)
             {
                 QStringList historyItem = fields[i].split(':');
+                if (historyItem[0] == QString("SEP"))
+                    break;
                 if (historyItem.size() == 2) 
                 {
                     int first = historyItem[0].toInt();
                     int second = historyItem[1].toInt();
-                    qDebug() << first << ", , " << second;
                     history.append(std::make_tuple(first, second));
+                }
+            }
+
+            /* Read last tile positions */
+            for (i; i < fields.size(); i++)
+            {
+                QStringList PositionItem = fields[i].split(':');
+                if (PositionItem.size() == 2) 
+                {
+                    int first = PositionItem[0].toInt();
+                    int second = PositionItem[1].toInt();
+                    positions.append(std::make_tuple(first, second));
                 }
             }
 
@@ -121,7 +136,7 @@ void MainWindow::OpenUserGame()
             m_puzzle->setShuffleSteps(0u);
             loadImage();
             m_puzzle->setShuffleSteps(SHUFFLE_STEPS);
-            m_puzzle->replaySteps();
+            m_puzzle->restoreTilesPositions(positions);
 
         }
 
@@ -141,7 +156,8 @@ void MainWindow::SaveUserGame()
 
     QFile file(fileName);
 
-    if (file.open(QIODevice::Append | QIODevice::Text)) {
+    if (file.open(QIODevice::Append | QIODevice::Text)) 
+    {
         QTextStream stream(&file);
 
         // Write data to CSV format
@@ -151,9 +167,20 @@ void MainWindow::SaveUserGame()
                << m_gameTimer->elapsedSeconds() << ","
                << m_puzzle->getUserSteps() << ",";
 
-        for (const auto& move : m_puzzle->getHistory()) {
+        // Write history steps
+        for (const auto& move : m_puzzle->getHistory()) 
+        {
             stream << std::get<0>(move) << ":" << std::get<1>(move) << ",";
         }
+
+        stream << "SEP,";
+        // Write last position of the tiles
+        QVector<Piece*> pieces = m_puzzle->getPieces();
+        for (int i = 0; i < pieces.size(); i++)
+        {
+            stream << i << ":" << pieces[i]->getId() << ",";
+        }
+
 
         stream << "\n";
 
@@ -264,7 +291,6 @@ void MainWindow::restartGame()
     resetTimer();
     updateStatusBarWithSteps(0);
     loadImage();
-
 }
 
 void MainWindow::changeGridSize(int size)
