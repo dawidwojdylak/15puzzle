@@ -11,7 +11,7 @@ OptionsDialog::OptionsDialog(QWidget *parent) : QDialog(parent) {
 
     QLabel *gridSizeLabel = new QLabel("Side size:");
     m_gridSizeComboBox = new QComboBox;
-    for (int size = 2; size <= 20; ++size) {
+    for (int size = 2; size <= 7; ++size) {
         m_gridSizeComboBox->addItem(QString::number(size));
     }
     m_gridSizeComboBox->setCurrentIndex(1);

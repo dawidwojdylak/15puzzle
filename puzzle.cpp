@@ -235,7 +235,7 @@ void Puzzle::clearPuzzle()
 
 void Puzzle::shuffle()
 {
-    for (int i = 0; i < m_shuffleSteps; ++i)
+    for (int i = 0; i < m_shuffleSteps * m_sideSize * m_sideSize; ++i)
     {
         int j = 0;
         for (const Piece * piece : m_pieces)
